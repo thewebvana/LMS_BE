@@ -23,7 +23,7 @@ const corsOptions = {
 
 
 const authenticateToken = (req, res, next) => {
-  const openRoutes = ["/api/login", "/api/signup"];
+  const openRoutes = ["/api/login", "/api/signup", "/api/test"];
   if (openRoutes.includes(req.path)) return next()
 
   const token = req.header("Authorization")?.split(" ")[1];
