@@ -3,13 +3,6 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
 const signupSchema = new mongoose.Schema({
-  // userId: { type: mongoose.Schema.Types.ObjectId, ref: "Signup", required: true },
-  customerName: { type: String, required: true },
-  companyName: { type: String, required: true },
-  address: { type: String, required: true },
-  city: { type: String, required: true },
-  zipcode: { type: String, required: true },
-  phone: { type: String, required: true },
   email: { type: String, required: true },
   password: { type: String, required: true },
 });

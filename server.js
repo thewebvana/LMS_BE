@@ -42,7 +42,7 @@ const authenticateToken = (req, res, next) => {
 // Middleware
 app.use(express.json());
 app.use(cors(corsOptions));
-app.use(authenticateToken);
+// app.use(authenticateToken);
 
 
 // MongoDB connection
@@ -55,10 +55,11 @@ mongoose
   .catch((err) => console.error("MongoDB connection error:", err));
 
 // Routes
-app.use("/api/", router);
-app.use("/api/", customerRouter);
-app.use("/api/", invoiceRouter);
-app.use("/api/", dashboardRouter);
+app.use("/api/stagging/v1", router);
+app.use("/api/stagging/v1", customerRouter);
+app.use("/api/stagging/v1", invoiceRouter);
+app.use("/api/stagging/v1", dashboardRouter);
+
 
 router.get("/test", (req, res) => {
   res.status(200).send("BE working fine!");

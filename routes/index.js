@@ -5,7 +5,7 @@ const { Signup } = require("../models/index");
 const router = express.Router();
 
 router.post("/signup", async (req, res) => {
-  const { customerName, companyName, address, city, zipcode, phone, email, password } = req.body;
+  const {email, password } = req.body;
 
   try {
     const userExists = await Signup.findOne({ email });
@@ -14,12 +14,6 @@ router.post("/signup", async (req, res) => {
     }
 
     const newUser = new Signup({
-      customerName,
-      companyName,
-      address,
-      city,
-      zipcode,
-      phone,
       email,
       password,
     });
@@ -35,7 +29,7 @@ router.post("/signup", async (req, res) => {
 })
 
 router.post("/login", async (req, res) => {
-  const { email, password, remember } = req.body;
+  const { email, password } = req.body;
 
   try {
     const user = await Signup.findOne({ email });
