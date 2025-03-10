@@ -1,21 +1,18 @@
-require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const authRoutes = require("./routes/authRoutes");
-const userRoutes = require("./routes/userRoutes");
+const dotenv = require("dotenv");
 
+dotenv.config();
 const app = express();
+
 app.use(cors());
 app.use(express.json());
 
-// Routes
-app.use("/auth", authRoutes);
-app.use("/users", userRoutes);
+// Import Routes
+const authRoutes = require("./routes/authRoutes");
 
-app.get("/", (req, res) => {
-  res.send("School Management API is running...");
-});
+// Use "/lms" prefix for all routes
+app.use("/lms", authRoutes);
 
-// Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
