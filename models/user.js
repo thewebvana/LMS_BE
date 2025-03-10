@@ -9,7 +9,7 @@ const Principal = sequelize.define("Principal", {
     defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
   },
-  name: {
+  username: {
     type: DataTypes.STRING,
     allowNull: false,
   },
@@ -21,18 +21,6 @@ const Principal = sequelize.define("Principal", {
   password: {
     type: DataTypes.STRING,
     allowNull: false,
-  },
-  principal_code: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  school_name: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
-  phone_number: {
-    type: DataTypes.STRING,
-    allowNull: true,
   },
 });
 

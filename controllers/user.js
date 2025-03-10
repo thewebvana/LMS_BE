@@ -34,15 +34,15 @@ const sendPasswordEmail = async (email, password, role) => {
 
 // ✅ Register Principal (Password comes from frontend)
 exports.createPrincipal = async (req, res) => {
+    console.log(req.body)
     try {
-        const { name, email, password } = req.body;
+        const { username, email, password } = req.body;
 
         if (await Principal.findOne({ where: { email } })) {
             return res.status(400).json({ message: "Email already exists" });
         }
-
         const hashedPassword = await bcrypt.hash(password, 10);
-        const principal = await Principal.create({ name, email, password: hashedPassword });
+        const principal = await Principal.create({ username, email, password: hashedPassword });
 
         res.status(201).json({ message: "Principal created successfully", principal });
     } catch (error) {

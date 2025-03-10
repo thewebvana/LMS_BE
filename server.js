@@ -13,7 +13,7 @@ const app = express();
 const PORT = process.env.PORT || 5000
 
 const corsOptions = {
-  origin: ["http://localhost:3000", "https://yourfrontenddomain.com"],
+  origin: "*",
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
 };
@@ -31,7 +31,8 @@ sequelize
   .catch((err) => console.error("❌ Sync Error:", err));
 
 // Routes
-app.use("/api/stagging/v1", userRouter)
+app.use(userRouter)
+
 
 // Start server
 app.listen(PORT, () => {

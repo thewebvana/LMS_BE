@@ -3,7 +3,7 @@ const { createPrincipal, createAdmin, createTeacher, createStudent } = require("
 
 const userRouter = express.Router();
 
-userRouter.post("/create-principal", createPrincipal);
+userRouter.post("/create-principal", (req, res) => {console.log(req)});
 userRouter.post("/create-admin", createAdmin);
 userRouter.post("/create-teacher", createTeacher);
 userRouter.post("/create-student", createStudent);
