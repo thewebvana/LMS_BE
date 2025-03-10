@@ -12,7 +12,7 @@ app.use("/lms/auth", authRoutes);
 app.use("/lms/users", userRoutes);
 
 app.get("/", (req, res) => {
-  res.send("School Management API is running...");
+  res.send("LMS API is running...");
 });
 
 const PORT = process.env.PORT || 5000;

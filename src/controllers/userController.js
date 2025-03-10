@@ -18,17 +18,7 @@ const UserController = {
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
-  },
-
-  createUser: async (req, res) => {
-    try {
-      const { name, email, password, role } = req.body;
-      const newUser = await UserModel.createUser(name, email, password, role || "user");
-      res.status(201).json(newUser);
-    } catch (err) {
-      res.status(500).json({ error: err.message });
-    }
-  },
+  }
 };
 
 module.exports = UserController;
