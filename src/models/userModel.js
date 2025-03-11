@@ -1,17 +1,23 @@
-const pool = require("../config/db"); // PostgreSQL database connection
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
 
 const UserModel = {
   getUserByEmail: async (email) => {
-    const result = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
-    return result.rows[0];
+    return await prisma.user.findUnique({ where: { email } });
   },
 
   createUser: async (name, email, password, role) => {
-    const result = await pool.query(
-      "INSERT INTO users (name, email, password, role) VALUES ($1, $2, $3, $4) RETURNING *",
-      [name, email, password, role]
-    );
-    return result.rows[0];
+    return await prisma.user.create({
+      data: { name, email, password, role },
+    });
+  },
+
+  getAllUsers: async () => {
+    return await prisma.user.findMany();
+  },
+
+  getUserById: async (id) => {
+    return await prisma.user.findUnique({ where: { id: parseInt(id) } });
   }
 };
 

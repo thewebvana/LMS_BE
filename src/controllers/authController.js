@@ -1,7 +1,9 @@
 require("dotenv").config();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const UserModel = require("../models/userModel");
+const { PrismaClient } = require("@prisma/client");
+
+const prisma = new PrismaClient();
 
 const AuthController = {
   register: async (req, res) => {
@@ -9,19 +11,25 @@ const AuthController = {
       const { name, email, password, role } = req.body;
 
       // Check if user already exists
-      const existingUser = await UserModel.getUserByEmail(email);
+      const existingUser = await prisma.user.findUnique({ where: { email } });
       if (existingUser) {
         return res.status(400).json({ error: "Email already in use" });
       }
 
       // Hash the password
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(password, salt);
+      const hashedPassword = await bcrypt.hash(password, 10);
 
       // Create user
-      const newUser = await UserModel.createUser(name, email, hashedPassword, role || "user");
+      const newUser = await prisma.user.create({
+        data: {
+          name,
+          email,
+          password: hashedPassword,
+          role: role || "user",
+        },
+      });
 
-      res.status(201).json(newUser);
+      res.status(201).json({ message: "User registered successfully", user: newUser });
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
@@ -32,7 +40,7 @@ const AuthController = {
       const { email, password } = req.body;
 
       // Check if user exists
-      const user = await UserModel.getUserByEmail(email);
+      const user = await prisma.user.findUnique({ where: { email } });
       if (!user) {
         return res.status(400).json({ error: "Invalid email or password" });
       }

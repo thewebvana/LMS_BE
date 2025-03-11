@@ -5,21 +5,18 @@ const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 
 const app = express();
-
-// Enable CORS for all routes
 app.use(
   cors({
-    origin: "http://localhost:5173", // Your frontend URL
+    origin: "http://localhost:5173", 
     methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"], // Allow Authorization header
-    credentials: true, // Allows sending cookies (if needed)
+    allowedHeaders: ["Content-Type", "Authorization"], 
+    credentials: true, 
   })
 );
-
 app.use(express.json());
 
-app.use("/lms/api/auth/", authRoutes);
-app.use("/lms/api/users/", userRoutes);
+app.use("/lms/api/auth", authRoutes);
+app.use("/lms/api/users", userRoutes);
 
 app.get("/", (req, res) => {
   res.send("LMS API is running...");
