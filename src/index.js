@@ -16,7 +16,7 @@ app.use(
 app.use(express.json());
 
 app.use("/lms/api/auth", authRoutes);
-app.use("/lms/api/users", userRoutes);
+app.use("/lms/api", userRoutes);
 
 app.get("/", (req, res) => {
   res.send("LMS API is running...");
