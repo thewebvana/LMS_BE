@@ -13,7 +13,7 @@ const AuthController = {
       // Check if user already exists
       const existingUser = await prisma.user.findUnique({ where: { email } });
       if (existingUser) {
-        return res.status(400).json({ error: "Email already in use" });
+        return res.status(409).json({ message: "Email already in use" });
       }
 
       // Hash the password
@@ -29,8 +29,9 @@ const AuthController = {
         },
       });
 
-      res.status(201).json({ message: "User registered successfully", user: newUser });
+      res.status(201).json({ message: "User registered successfully" });
     } catch (err) {
+      console.log(err)
       res.status(500).json({ error: err.message });
     }
   },
