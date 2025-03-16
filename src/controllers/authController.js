@@ -54,15 +54,15 @@ const AuthController = {
       const { email, password } = req.body;
 
       // Check if user exists
-      const user = await prisma.user.findUnique({ where: { email } });
+      const user = await prisma.Principle.findUnique({ where: { email } });
       if (!user) {
-        return res.status(400).json({ error: "Invalid email or password" });
+        return res.status(400).json({ error: "Invalid email" });
       }
 
       // Compare password
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
-        return res.status(400).json({ error: "Invalid email or password" });
+        return res.status(400).json({ error: "Invalid password" });
       }
 
       // Generate JWT token
@@ -70,7 +70,7 @@ const AuthController = {
         expiresIn: "1d",
       });
 
-      res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
+      res.json({ token, user});
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
