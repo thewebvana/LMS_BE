@@ -66,11 +66,19 @@ const AuthController = {
       }
 
       // Generate JWT token
-      const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, {
+      const token = jwt.sign({ id: user.id, role_id: user.role_id }, process.env.JWT_SECRET, {
         expiresIn: "1d",
       });
 
-      res.json({ token, user});
+      let data = {
+        user_id: user.id,
+        role_id: user.role_id,
+        full_name: user.full_name,
+        email: user.email,
+        mobile: user.mobile,
+      }
+      res.cookie("token", token, { httpOnly: true, secure: false }).json({ message: "Login successful", user: data });
+      // res.json({ token, user});
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
