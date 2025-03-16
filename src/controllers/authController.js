@@ -19,16 +19,16 @@ const AuthController = {
       if (!body.password) return res.status(400).json({ message: "Password is required" });
 
 
-    //  const existingUser = await prisma.principle.findUnique({ where: { email: body.email } });
+     const existingUser = await prisma.principle.findUnique({ where: { email: body.email } });
 
-    //   if (existingUser) {
-    //     return res.status(409).json({
-    //       message:
-    //         existingUser.email === body.email
-    //           ? "Email already in use"
-    //           : "Phone number already in use",
-    //     });
-    //   }
+      if (existingUser) {
+        return res.status(409).json({
+          message:
+            existingUser.email === body.email
+              ? "Email already in use"
+              : "Phone number already in use",
+        });
+      }
 
 
       // Hash the password

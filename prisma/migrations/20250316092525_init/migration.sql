@@ -1,11 +1,5 @@
-/*
-  Warnings:
-
-  - You are about to drop the `principle` table. If the table is not empty, all the data it contains will be lost.
-
-*/
--- DropTable
-DROP TABLE "principle";
+-- CreateEnum
+CREATE TYPE "Gender" AS ENUM ('male', 'female', 'other');
 
 -- CreateTable
 CREATE TABLE "Principle" (
