@@ -1,0 +1,7 @@
+-- AlterTable
+ALTER TABLE "Principle" ALTER COLUMN "employee_id" DROP NOT NULL,
+ALTER COLUMN "gender" DROP NOT NULL,
+ALTER COLUMN "address" DROP NOT NULL,
+ALTER COLUMN "joining_date" DROP NOT NULL,
+ALTER COLUMN "designation" DROP NOT NULL,
+ALTER COLUMN "qualification" DROP NOT NULL;

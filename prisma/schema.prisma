@@ -13,12 +13,29 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id       Int    @id @default(autoincrement())
-  name     String
-  email    String @unique
-  password String
-  role     String @default("user")
-  createdAt DateTime @default(now())
+
+enum Gender {
+  male
+  female
+  other
 }
 
+model Principle {
+  id              String   @id @default(uuid()) // Unique ID
+  role_id         Int
+  employee_id     String?   @unique
+  full_name       String
+  email           String   @unique
+  mobile          String   @unique
+  gender          Gender?
+  address         String?
+  joining_date    DateTime?
+  designation     String?
+  qualification   String?
+  work_experience String?
+  password        String
+  active          Boolean  @default(true)
+  isDeleted       Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
