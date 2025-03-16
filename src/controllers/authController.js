@@ -19,7 +19,7 @@ const AuthController = {
       if (!body.password) return res.status(400).json({ message: "Password is required" });
 
 
-     const existingUser = await prisma.principle.findUnique({ where: { email: body.email } });
+     const existingUser = await prisma.Principle.findUnique({ where: { email: body.email } });
 
       if (existingUser) {
         return res.status(409).json({
@@ -35,7 +35,7 @@ const AuthController = {
       const hashedPassword = await bcrypt.hash(body.password, 10);
 
       // Create user
-      const newUser = await prisma.principle.create({
+      const newUser = await prisma.Principle.create({
         data: {
           ...body,
           password: hashedPassword,
