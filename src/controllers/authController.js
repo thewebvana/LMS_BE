@@ -77,7 +77,8 @@ const AuthController = {
         email: user.email,
         mobile: user.mobile,
       }
-      res.cookie("token", token, { httpOnly: true, secure: false }).json({ message: "Login successful", user: data });
+      
+      res.cookie("token", token, { httpOnly: true, secure: false }).json({ message: "Login successful", user: data, token });
       // res.json({ token, user});
     } catch (err) {
       res.status(500).json({ error: err.message });
