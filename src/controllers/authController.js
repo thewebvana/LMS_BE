@@ -18,8 +18,7 @@ const AuthController = {
       if (!body.mobile) return res.status(400).json({ message: "Phone number is required" });
       if (!body.password) return res.status(400).json({ message: "Password is required" });
 
-      // Check if user exists by email or phone in a single query
-     // Check if user already exists
+
      const existingUser = await prisma.principle.findUnique({ where: { email: body.email } });
 
       if (existingUser) {

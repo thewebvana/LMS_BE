@@ -20,7 +20,7 @@ enum Gender {
   other
 }
 
-model principle {
+model Principle {
   id              String   @id @default(uuid()) // Unique ID
   role_id         Int
   employee_id     String?   @unique
