@@ -97,21 +97,16 @@ const AuthController = {
   },
 
   forgotPassword: async (req, res) => {
- 
+
     try {
       const { email } = req.body;
+      if (!email) return res.status(404).json({ message: "Email required.." });
+
       const user = await prisma.Principle.findUnique({ where: { email } });
       if (!user) return res.status(404).json({ message: "User not found" });
 
       // Generate reset token
       const resetToken = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: "15m" });
-
-      // Store token in PasswordReset table
-      await prisma.PasswordReset.upsert({
-        where: { user_id: user.user_id },
-        update: { token: resetToken, expiresAt: new Date(Date.now() + 15 * 60000) },
-        create: { user_id: user.user_id, token: resetToken, expiresAt: new Date(Date.now() + 15 * 60000) },
-      });
 
       // Send reset email
       const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
@@ -128,8 +123,36 @@ const AuthController = {
       res.status(500).json({ message: error });
       // res.status(500).json({ message: "Server error" });
     }
-  }
+  },
 
+  resetPassword: async (req, res) => {
+    
+    try {
+      const { token, newPassword  } = req.body;
+      if (!token) return res.status(404).json({ message: "token missing.." });
+      if (!newPassword) return res.status(404).json({ message: "new password required.." });
+
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+      // Get user
+      const user = await prisma.Principle.findUnique({ where: { email: decoded.email } });
+
+      // Hash new password
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+      // Update password & delete reset token
+      await prisma.Principle.update({
+        where: { user_id: user.user_id },
+        data: { password: hashedPassword },
+      });
+
+      // await prisma.decoded.delete({ where: { token } });
+
+      res.json({ message: "Password has been reset successfully" });
+    } catch (error) {
+      res.status(400).json({ message: "Invalid or expired token" });
+    }
+  }
 
 };
 
