@@ -14,29 +14,83 @@ datasource db {
 }
 
 
-model Principle {
+
+enum Role {
+  PRINCIPAL
+  ADMIN
+  TEACHER
+  STUDENT
+  PARENTS
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+model User {
   user_id         String   @id @default(uuid()) 
-  role_id         Int
-  employee_id     String?   @unique
+  role            Role
   full_name       String
   email           String   @unique
   mobile          String   @unique
   gender          Gender?
   address         String?
-  joining_date    DateTime?
-  designation     String?
-  qualification   String?
-  work_experience String?
   password        String
   active          Boolean  @default(true)
   isDeleted       Boolean  @default(false)
   createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  updatedAt       DateTime @updatedAt     
 
+  // Relations
+  principal  Principal?
+  teacher    Teacher?
+  student    Student?
+  admin      Admin?
 }
 
-enum Gender {
-  male
-  female
-  other
+model Principal {
+  user_id         String  @id
+  employee_id     String?   @unique
+  joining_date    DateTime?
+  designation     String?
+  qualification   String?
+  work_experience String?
+  user            User    @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+}
+
+model Admin {
+  user_id         String  @id
+  employee_id     String?   @unique
+  joining_date    DateTime?
+  designation     String?
+  qualification   String?
+  work_experience String?
+  user            User    @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+}
+
+model Teacher {
+  user_id         String  @id
+  employee_id     String?   @unique
+  joining_date    DateTime?
+  designation     String?
+  qualification   String?
+  work_experience String?
+  class_assigned  String?
+  subjects_taught String?
+  user            User    @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+}
+
+model Student {
+  user_id         String  @id
+  student_id      String?   @unique
+  enrollment_number String?   @unique
+  joining_date    DateTime?
+  class_section   String?
+  admission_date  DateTime?
+  blood_group     String?
+  parents_name    String?
+  emergency_contact String?
+  user            User    @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
 }

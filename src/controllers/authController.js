@@ -74,20 +74,20 @@ const emailTemplate = (resetLink) => `<!DOCTYPE html>
 
 
 const AuthController = {
+
   register: async (req, res) => {
     try {
       const body = req.body;
 
-
       // Validate required fields with specific error messages
-      if (!body.role_id) return res.status(400).json({ message: "Role is required" });
+      if (!body.role) return res.status(400).json({ message: "Role is required" });
       if (!body.full_name) return res.status(400).json({ message: "Name is required" });
       if (!body.email) return res.status(400).json({ message: "Email is required" });
       if (!body.mobile) return res.status(400).json({ message: "Phone number is required" });
       if (!body.password) return res.status(400).json({ message: "Password is required" });
 
 
-      const existingUser = await prisma.Principle.findUnique({ where: { email: body.email } });
+      const existingUser = await prisma.User.findUnique({ where: { email: body.email } });
 
       if (existingUser) {
         return res.status(409).json({
@@ -103,7 +103,7 @@ const AuthController = {
       const hashedPassword = await bcrypt.hash(body.password, 10);
 
       // Create user
-      const newUser = await prisma.Principle.create({
+      const newUser = await prisma.User.create({
         data: {
           ...body,
           password: hashedPassword,
@@ -122,7 +122,7 @@ const AuthController = {
       const { email, password } = req.body;
 
       // Check if user exists
-      const user = await prisma.Principle.findUnique({ where: { email } });
+      const user = await prisma.User.findUnique({ where: { email } });
       if (!user) {
         return res.status(400).json({ error: "Email does not exists" });
       }
@@ -159,7 +159,7 @@ const AuthController = {
       const { email } = req.body;
       if (!email) return res.status(404).json({ message: "Email required.." });
 
-      const user = await prisma.Principle.findUnique({ where: { email } });
+      const user = await prisma.User.findUnique({ where: { email } });
       if (!user) return res.status(404).json({ message: "User not found" });
 
       // Generate reset token
@@ -192,20 +192,17 @@ const AuthController = {
         if (!decoded.email) return res.status(400).json({ message: "Invalid token" });
 
         // Find user
-        const user = await prisma.Principle.findUnique({ where: { email: decoded.email } });
+        const user = await prisma.User.findUnique({ where: { email: decoded.email } });
         if (!user) return res.status(404).json({ message: "User not found" });
 
         // Hash new password
         const hashedPassword = await bcrypt.hash(newPassword, 10);
 
         // Update password in DB
-        await prisma.Principle.update({
+        await prisma.User.update({
             where: { email: decoded.email },
             data: { password: hashedPassword },
         });
-
-        // Delete the token from the PasswordReset table
-        await prisma.PasswordReset.deleteMany({ where: { user_id: user.user_id } });
 
         res.json({ message: "Password reset successfully!" });
     } catch (error) {
