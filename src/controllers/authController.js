@@ -182,33 +182,38 @@ const AuthController = {
     }
   },
 
+
   resetPassword: async (req, res) => {
-
     try {
-      const { token, newPassword } = req.body;
-      if (!token) return res.status(404).json({ message: "token missing.." });
-      if (!newPassword) return res.status(404).json({ message: "new password required.." });
+        const { token, newPassword } = req.body;
 
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        // Verify token
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        if (!decoded.email) return res.status(400).json({ message: "Invalid token" });
 
-      // Get user
-      const user = await prisma.Principle.findUnique({ where: { email: decoded.email } });
+        // Find user
+        const user = await prisma.Principle.findUnique({ where: { email: decoded.email } });
+        if (!user) return res.status(404).json({ message: "User not found" });
 
-      // Hash new password
-      const hashedPassword = await bcrypt.hash(newPassword, 10);
+        // Hash new password
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-      // Update password & delete reset token
-      await prisma.Principle.update({
-        where: { user_id: user.user_id },
-        data: { password: hashedPassword },
-      });
+        // Update password in DB
+        await prisma.Principle.update({
+            where: { email: decoded.email },
+            data: { password: hashedPassword },
+        });
 
+        // Delete the token from the PasswordReset table
+        await prisma.PasswordReset.deleteMany({ where: { user_id: user.user_id } });
 
-      res.json({ message: "Password has been reset successfully" });
+        res.json({ message: "Password reset successfully!" });
     } catch (error) {
-      res.status(400).json({ message: "Invalid or expired token" });
+        res.status(400).json({ message: "Invalid or expired token" });
     }
-  }
+}
+
+
 
 };
 
