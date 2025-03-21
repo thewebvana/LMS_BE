@@ -87,7 +87,7 @@ const AuthController = {
       if (!body.password) return res.status(400).json({ message: "Password is required" });
 
 
-      const existingUser = await prisma.principle.findUnique({ where: { email: body.email } });
+      const existingUser = await prisma.Principle.findUnique({ where: { email: body.email } });
 
       if (existingUser) {
         return res.status(409).json({
@@ -124,7 +124,7 @@ const AuthController = {
       // Check if user exists
       const user = await prisma.Principle.findUnique({ where: { email } });
       if (!user) {
-        return res.status(400).json({ error: "Invalid email" });
+        return res.status(400).json({ error: "Email does not exists" });
       }
 
       // Compare password

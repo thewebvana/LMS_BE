@@ -7,4 +7,4 @@ router.post("/v1/login", AuthController.login);
 router.post("/v1/forgot-password", AuthController.forgotPassword);
 router.post("/v1/reset-password", AuthController.resetPassword);
 
-module.exports = router;
+module.exports = router
