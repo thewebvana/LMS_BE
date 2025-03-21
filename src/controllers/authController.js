@@ -2,8 +2,19 @@ require("dotenv").config();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { PrismaClient } = require("@prisma/client");
+const nodemailer = require("nodemailer");
 
 const prisma = new PrismaClient();
+
+// Email Transporter
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
 
 const AuthController = {
   register: async (req, res) => {
@@ -19,7 +30,7 @@ const AuthController = {
       if (!body.password) return res.status(400).json({ message: "Password is required" });
 
 
-     const existingUser = await prisma.principle.findUnique({ where: { email: body.email } });
+      const existingUser = await prisma.principle.findUnique({ where: { email: body.email } });
 
       if (existingUser) {
         return res.status(409).json({
@@ -66,24 +77,60 @@ const AuthController = {
       }
 
       // Generate JWT token
-      const token = jwt.sign({ id: user.id, role_id: user.role_id }, process.env.JWT_SECRET, {
+      const token = jwt.sign({ user_id: user.user_id, role_id: user.role_id }, process.env.JWT_SECRET, {
         expiresIn: "1d",
       });
 
       let data = {
-        user_id: user.id,
+        user_id: user.user_id,
         role_id: user.role_id,
         full_name: user.full_name,
         email: user.email,
         mobile: user.mobile,
       }
-      
+
       res.cookie("token", token, { httpOnly: true, secure: false }).json({ message: "Login successful", user: data, token });
       // res.json({ token, user});
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
   },
+
+  forgotPassword: async (req, res) => {
+ 
+    try {
+      const { email } = req.body;
+      const user = await prisma.Principle.findUnique({ where: { email } });
+      if (!user) return res.status(404).json({ message: "User not found" });
+
+      // Generate reset token
+      const resetToken = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: "15m" });
+
+      // Store token in PasswordReset table
+      await prisma.PasswordReset.upsert({
+        where: { user_id: user.user_id },
+        update: { token: resetToken, expiresAt: new Date(Date.now() + 15 * 60000) },
+        create: { user_id: user.user_id, token: resetToken, expiresAt: new Date(Date.now() + 15 * 60000) },
+      });
+
+      // Send reset email
+      const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
+
+      await transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: "Password Reset",
+        html: `<p>Click <a href="${resetLink}">here</a> to reset your password. This link expires in 15 minutes.</p>`,
+      });
+
+      res.json({ message: "Password reset link sent to your email" });
+    } catch (error) {
+      res.status(500).json({ message: error });
+      // res.status(500).json({ message: "Server error" });
+    }
+  }
+
+
 };
 
 module.exports = AuthController;

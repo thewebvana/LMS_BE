@@ -15,7 +15,7 @@ datasource db {
 
 
 model Principle {
-  id              String   @id @default(uuid()) // Unique ID
+  user_id         String   @id @default(uuid()) 
   role_id         Int
   employee_id     String?   @unique
   full_name       String
@@ -32,10 +32,23 @@ model Principle {
   isDeleted       Boolean  @default(false)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+
+  passwordResets PasswordReset[]  
 }
 
 enum Gender {
   male
   female
   other
+}
+
+
+model PasswordReset {
+  id             String   @id @default(uuid())
+  user_id        String   @unique 
+  principle      Principle     @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  token          String   @unique
+  expiresAt      DateTime
+
+  @@index([user_id])  // Improves lookup performance
 }
