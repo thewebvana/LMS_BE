@@ -7,16 +7,146 @@ const nodemailer = require("nodemailer");
 const prisma = new PrismaClient();
 
 
+const userController = {
+  getAllUsers: async (req, res) => {
+    try {
+      const users = await prisma.user.findMany();
+      res.json({ data: users });
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching users", error });
+    }
+  },
+
+  updateUser: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const body = req.body;
+
+      if (!body.role) return res.status(400).json({ message: "Role is required" });
+
+      const role = body.role;
+
+      const updatedClassroom = await prisma.user.update({
+        where: { user_id: id },
+        data: {
+          role: body.role,
+          full_name: body.full_name,
+          email: body.email,
+          mobile: body.mobile,
+          gender: body.gender,
+          address: body.address,
+
+          ...(role === "PRINCIPAL" && {
+            principal: {
+              upsert: {
+                create: {
+                  employee_id: body.employee_id,
+                  joining_date: body.joining_date,
+                  designation: body.designation,
+                  qualification: body.qualification,
+                  work_experience: body.work_experience,
+                },
+                update: {
+                  employee_id: body.employee_id,
+                  joining_date: body.joining_date,
+                  designation: body.designation,
+                  qualification: body.qualification,
+                  work_experience: body.work_experience,
+                },
+              },
+            },
+          }),
+
+          ...(role === "ADMIN" && {
+            admin: {
+              upsert: {
+                create: {
+                  employee_id: body.employee_id,
+                  joining_date: body.joining_date,
+                  designation: body.designation,
+                  qualification: body.qualification,
+                  work_experience: body.work_experience,
+                },
+                update: {
+                  employee_id: body.employee_id,
+                  joining_date: body.joining_date,
+                  designation: body.designation,
+                  qualification: body.qualification,
+                  work_experience: body.work_experience,
+                },
+              },
+            },
+          }),
+
+          ...(role === "TEACHER" && {
+            teacher: {
+              upsert: {
+                create: {
+                  employee_id: body.employee_id,
+                  joining_date: body.joining_date,
+                  designation: body.designation,
+                  qualification: body.qualification,
+                  work_experience: body.work_experience,
+                  class_assigned: body.class_assigned,
+                  subjects_taught: body.subjects_taught,
+                },
+                update: {
+                  employee_id: body.employee_id,
+                  joining_date: body.joining_date,
+                  designation: body.designation,
+                  qualification: body.qualification,
+                  work_experience: body.work_experience,
+                  class_assigned: body.class_assigned,
+                  subjects_taught: body.subjects_taught,
+                },
+              },
+            },
+          }),
+
+          // Student Role Handling
+          ...(role === "STUDENT" && {
+            student: {
+              upsert: {
+                create: {
+                  student_id: body.student_id,
+                  enrollment_number: body.enrollment_number,
+                  class_section: body.class_section,
+                  admission_date: body.admission_date,
+                  blood_group: body.blood_group,
+                  parents_name: body.parents_name,
+                  emergency_contact: body.emergency_contact,
+                },
+                update: {
+                  student_id: body.student_id,
+                  enrollment_number: body.enrollment_number,
+                  class_section: body.class_section,
+                  admission_date: body.admission_date,
+                  blood_group: body.blood_group,
+                  parents_name: body.parents_name,
+                  emergency_contact: body.emergency_contact,
+                },
+              },
+            },
+          }),
+        },
+      });
+      res.status(201).json({ message: `${body.full_name} updated successfully..` });
+    } catch (error) {
+      res.status(500).json({ message: "Error updating user", error });
+    }
+  },
+}
 
 
-const AuthController = {
+
+const ClassroomController = {
 
   getClassrooms: async (req, res) => {
     try {
       const classrooms = await prisma.classroom.findMany();
-      res.json({data: classrooms });
+      res.json({ data: classrooms });
     } catch (error) {
-      res.status(500).json({  message: "Error fetching classrooms", error });
+      res.status(500).json({ message: "Error fetching classrooms", error });
     }
   },
 
@@ -37,11 +167,11 @@ const AuthController = {
           ]
         }
       });
-      
+
       if (existingUser) {
         return res.status(409).json({
-          message: existingUser.name === body.name 
-            ? "Name already exists!" 
+          message: existingUser.name === body.name
+            ? "Name already exists!"
             : "Class already exists!"
         });
       }
@@ -49,7 +179,7 @@ const AuthController = {
       // Create user
       const newClass = await prisma.classroom.create({
         data: {
-         ...body
+          ...body
         },
       });
 
@@ -84,7 +214,6 @@ const AuthController = {
     }
   },
 
-
 };
 
-module.exports = AuthController;
+module.exports = { userController, ClassroomController };
