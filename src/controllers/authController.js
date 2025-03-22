@@ -189,7 +189,7 @@ const AuthController = {
       }
 
       // Generate JWT token
-      const token = jwt.sign({ user_id: user.user_id, role_id: user.role_id }, process.env.JWT_SECRET, {
+      const token = jwt.sign({ ...user }, process.env.JWT_SECRET, {
         expiresIn: "1d",
       });
 

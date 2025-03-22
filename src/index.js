@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
+const configRoutes = require("./routes/configRoutes");
 
 const app = express();
 app.use(
@@ -16,6 +17,7 @@ app.use(
 app.use(express.json());
 
 app.use("/lms/api/auth", authRoutes);
+app.use("/lms/api/config", configRoutes);
 app.use("/lms/api", userRoutes);
 
 app.get("/", (req, res) => {

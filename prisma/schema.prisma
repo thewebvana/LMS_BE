@@ -86,10 +86,23 @@ model Student {
   user_id         String  @id
   student_id      String?   @unique
   enrollment_number String?   @unique
-  class_section   String?
+  grade       String? 
+  section     String? 
   admission_date  DateTime?
   blood_group     String?
   parents_name    String?
   emergency_contact String?
   user            User    @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+}
+
+
+//classroom modals
+
+model Classroom {
+  id          String   @id @default(uuid())  
+  name        String  
+  section     String? 
+  grade       String?   
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
 }
