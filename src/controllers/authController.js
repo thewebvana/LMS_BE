@@ -85,7 +85,7 @@ const AuthController = {
       if (!body.password) return res.status(400).json({ message: "Password is required" });
 
 
-      const existingUser = await prisma.User.findUnique({ where: { email: body.email } });
+      const existingUser = await prisma.user.findUnique({ where: { email: body.email } });
 
       if (existingUser) {
         return res.status(409).json({
@@ -103,7 +103,7 @@ const AuthController = {
       const role = body.role;
         
       // Create user
-      const newUser = await prisma.User.create({
+      const newUser = await prisma.user.create({
         data: {
           role: body.role,
           full_name: body.full_name,
@@ -177,7 +177,7 @@ const AuthController = {
       const { email, password } = req.body;
 
       // Check if user exists
-      const user = await prisma.User.findUnique({ where: { email } });
+      const user = await prisma.user.findUnique({ where: { email } });
       if (!user) {
         return res.status(400).json({ error: "Email does not exists" });
       }
