@@ -86,7 +86,6 @@ model Student {
   user_id         String  @id
   student_id      String?   @unique
   enrollment_number String?   @unique
-  joining_date    DateTime?
   class_section   String?
   admission_date  DateTime?
   blood_group     String?

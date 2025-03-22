@@ -15,7 +15,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-
 const emailTemplate = (resetLink) => `<!DOCTYPE html>
 <html>
 <head>
@@ -72,7 +71,6 @@ const emailTemplate = (resetLink) => `<!DOCTYPE html>
 
 `;
 
-
 const AuthController = {
 
   register: async (req, res) => {
@@ -102,11 +100,68 @@ const AuthController = {
       // Hash the password
       const hashedPassword = await bcrypt.hash(body.password, 10);
 
+      const role = body.role;
+        
       // Create user
       const newUser = await prisma.User.create({
         data: {
-          ...body,
+          role: body.role,
+          full_name: body.full_name,
+          email: body.email,
+          mobile: body.mobile,
+          gender: body.gender,
+          address: body.address,
           password: hashedPassword,
+
+          ...(role === 'PRINCIPAL' && {
+            principal: {
+              create: {
+                employee_id: body.employee_id,
+                joining_date: body.joining_date,
+                designation: body.designation,
+                qualification: body.qualification,
+                work_experience: body.work_experience,
+              }
+            },
+          }),
+          ...(role === 'ADMIN' && {
+            admin: {
+              create: {
+                employee_id: body.employee_id,
+                joining_date: body.joining_date,
+                designation: body.designation,
+                qualification: body.qualification,
+                work_experience: body.work_experience,
+              }
+            },
+          }),
+          ...(role === 'TEACHER' && {
+            teacher: {
+              create: {
+                employee_id: body.employee_id,
+                joining_date: body.joining_date,
+                designation: body.designation,
+                qualification: body.qualification,
+                work_experience: body.work_experience,
+                class_assigned: body.class_assigned,
+                subjects_taught: body.subjects_taught,
+              }
+            },
+          }),
+          ...(role === 'STUDENT' && {
+            student: {
+              create: {
+                student_id: body.student_id,
+                enrollment_number: body.enrollment_number,
+                class_section: body.class_section,
+                admission_date: body.admission_date,
+                blood_group: body.blood_group,
+                parents_name: body.parents_name,
+                emergency_contact: body.emergency_contact,
+              }
+            },
+          }),
+        
         },
       });
 
@@ -182,35 +237,32 @@ const AuthController = {
     }
   },
 
-
   resetPassword: async (req, res) => {
     try {
-        const { token, newPassword } = req.body;
+      const { token, newPassword } = req.body;
 
-        // Verify token
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        if (!decoded.email) return res.status(400).json({ message: "Invalid token" });
+      // Verify token
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      if (!decoded.email) return res.status(400).json({ message: "Invalid token" });
 
-        // Find user
-        const user = await prisma.User.findUnique({ where: { email: decoded.email } });
-        if (!user) return res.status(404).json({ message: "User not found" });
+      // Find user
+      const user = await prisma.User.findUnique({ where: { email: decoded.email } });
+      if (!user) return res.status(404).json({ message: "User not found" });
 
-        // Hash new password
-        const hashedPassword = await bcrypt.hash(newPassword, 10);
+      // Hash new password
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-        // Update password in DB
-        await prisma.User.update({
-            where: { email: decoded.email },
-            data: { password: hashedPassword },
-        });
+      // Update password in DB
+      await prisma.User.update({
+        where: { email: decoded.email },
+        data: { password: hashedPassword },
+      });
 
-        res.json({ message: "Password reset successfully!" });
+      res.json({ message: "Password reset successfully!" });
     } catch (error) {
-        res.status(400).json({ message: "Invalid or expired token" });
+      res.status(400).json({ message: "Invalid or expired token" });
     }
-}
-
-
+  }
 
 };
 
