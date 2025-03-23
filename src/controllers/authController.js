@@ -195,7 +195,7 @@ const AuthController = {
 
       let data = {
         user_id: user.user_id,
-        role_id: user.role,
+        role: user.role,
         full_name: user.full_name,
         email: user.email,
         mobile: user.mobile,
