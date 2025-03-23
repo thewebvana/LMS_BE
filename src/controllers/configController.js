@@ -11,7 +11,20 @@ const userController = {
   getAllUsers: async (req, res) => {
     try {
       const users = await prisma.user.findMany();
-      res.json({ data: users });
+
+      const data = {
+        user_id:  users.user_id,
+        role: users.role,
+        full_name: users.full_name,
+        email: users.email,
+        mobile: users.mobile,
+        gender: users.gender,
+        address: users.address,
+        active: users.active,
+        createdAt: users.createdAt,
+        updatedAt: users.updatedAt,
+      }
+      res.json({ data });
     } catch (error) {
       res.status(500).json({ message: "Error fetching users", error });
     }
