@@ -25,8 +25,22 @@ const userController = {
         },
       });
 
-      
-      res.status(201).json({ data: users });
+      // Define data types manually
+      const columnsTypes = {
+        user_id: "string",
+        role: "string",
+        full_name: "string",
+        email: "string",
+        mobile: "string",
+        gender: "string",
+        address: "string",
+        active: "boolean",
+        createdAt: "Date",
+        updatedAt: "Date",
+      };
+
+
+      res.status(201).json({ data: users, columnsTypes });
     } catch (error) {
       res.status(500).json({ message: "Error fetching users", error });
     }
