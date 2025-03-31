@@ -1,8 +1,8 @@
 -- CreateEnum
-CREATE TYPE "Role" AS ENUM ('PRINCIPAL', 'ADMIN', 'TEACHER', 'STUDENT', 'PARENTS');
+CREATE TYPE "Role" AS ENUM ('Principal', 'Admin', 'Teacher', 'Student', 'Parent');
 
 -- CreateEnum
-CREATE TYPE "Gender" AS ENUM ('MALE', 'FEMALE', 'OTHER');
+CREATE TYPE "Gender" AS ENUM ('Male', 'Female', 'Other');
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -15,9 +15,9 @@ CREATE TABLE "User" (
     "address" TEXT,
     "password" TEXT NOT NULL,
     "active" BOOLEAN NOT NULL DEFAULT true,
-    "isDeleted" BOOLEAN NOT NULL DEFAULT false,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "is_deleted" BOOLEAN NOT NULL DEFAULT false,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("user_id")
 );
@@ -65,14 +65,26 @@ CREATE TABLE "Student" (
     "user_id" TEXT NOT NULL,
     "student_id" TEXT,
     "enrollment_number" TEXT,
-    "joining_date" TIMESTAMP(3),
-    "class_section" TEXT,
+    "grade" TEXT,
+    "section" TEXT,
     "admission_date" TIMESTAMP(3),
     "blood_group" TEXT,
     "parents_name" TEXT,
     "emergency_contact" TEXT,
 
     CONSTRAINT "Student_pkey" PRIMARY KEY ("user_id")
+);
+
+-- CreateTable
+CREATE TABLE "Classroom" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "section" TEXT,
+    "grade" TEXT,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Classroom_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex

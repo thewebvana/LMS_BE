@@ -20,8 +20,8 @@ const userController = {
           gender: true,
           address: true,
           active: true,
-          createdAt: true,
-          updatedAt: true,
+          created_at: true,
+          updated_at: true,
         },
       });
 
@@ -35,8 +35,8 @@ const userController = {
         gender: "string",
         address: "string",
         active: "boolean",
-        createdAt: "Date",
-        updatedAt: "Date",
+        created_at: "Date",
+        updated_at: "Date",
       };
 
 
@@ -65,7 +65,7 @@ const userController = {
           gender: body.gender,
           address: body.address,
 
-          ...(role === "PRINCIPAL" && {
+          ...(role === "Principal" && {
             principal: {
               upsert: {
                 create: {
@@ -86,7 +86,7 @@ const userController = {
             },
           }),
 
-          ...(role === "ADMIN" && {
+          ...(role === "Admin" && {
             admin: {
               upsert: {
                 create: {
@@ -107,7 +107,7 @@ const userController = {
             },
           }),
 
-          ...(role === "TEACHER" && {
+          ...(role === "Teacher" && {
             teacher: {
               upsert: {
                 create: {
@@ -133,7 +133,7 @@ const userController = {
           }),
 
           // Student Role Handling
-          ...(role === "STUDENT" && {
+          ...(role === "Student" && {
             student: {
               upsert: {
                 create: {

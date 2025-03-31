@@ -75,16 +75,7 @@ const AuthController = {
 
   register: async (req, res) => {
     try {
-      const body = req.body;
-
-      // Validate required fields with specific error messages
-      if (!body.role) return res.status(400).json({ message: "Role is required" });
-      if (!body.full_name) return res.status(400).json({ message: "Name is required" });
-      if (!body.email) return res.status(400).json({ message: "Email is required" });
-      if (!body.mobile) return res.status(400).json({ message: "Phone number is required" });
-      if (!body.password) return res.status(400).json({ message: "Password is required" });
-
-
+      const body = req.body
       const existingUser = await prisma.user.findUnique({ where: { email: body.email } });
 
       if (existingUser) {
@@ -100,8 +91,11 @@ const AuthController = {
       // Hash the password
       const hashedPassword = await bcrypt.hash(body.password, 10);
 
-      const role = body.role;
-        
+      
+    const role = body.role
+
+    console.log(role)
+      
       // Create user
       const newUser = await prisma.user.create({
         data: {
@@ -113,7 +107,7 @@ const AuthController = {
           address: body.address,
           password: hashedPassword,
 
-          ...(role === 'PRINCIPAL' && {
+          ...(role === 'Principal' && {
             principal: {
               create: {
                 employee_id: body.employee_id,
@@ -124,7 +118,7 @@ const AuthController = {
               }
             },
           }),
-          ...(role === 'ADMIN' && {
+          ...(role === 'Admin' && {
             admin: {
               create: {
                 employee_id: body.employee_id,
@@ -135,7 +129,7 @@ const AuthController = {
               }
             },
           }),
-          ...(role === 'TEACHER' && {
+          ...(role === 'Teacher' && {
             teacher: {
               create: {
                 employee_id: body.employee_id,
@@ -148,7 +142,7 @@ const AuthController = {
               }
             },
           }),
-          ...(role === 'STUDENT' && {
+          ...(role === 'Student' && {
             student: {
               create: {
                 student_id: body.student_id,
@@ -161,7 +155,7 @@ const AuthController = {
               }
             },
           }),
-        
+
         },
       });
 
